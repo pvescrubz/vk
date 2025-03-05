@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Очистка списка друзей и черного списка ВКонтакте</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Очистка списка друзей и черного списка ВКонтакте</h1>
+        <form id="tokenForm">
+            <label for="tokenInput">Введите ваш токен:</label><br>
+            <input type="text" id="tokenInput" name="token" placeholder="https://oauth.vk.com/blank.html#access_token=..." style="width: 100%; padding: 10px; margin-bottom: 10px;">
+            <button type="submit">Получить список</button>
+        </form>
+
+        <!-- Таблица для отображения данных -->
+        <table id="userDataTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Собачки (удаленные друзья)</th>
+                    <th>Черный список</th>
+                </tr>
+            </thead>
+            <tbody id="userDataTableBody">
+            </tbody>
+        </table>
+
+        <!-- Кнопка удаления -->
+        <button id="deleteButton" style="display: none;" onclick="deleteUsers()">Удалить выбранных пользователей</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('tokenForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const tokenInput = document.getElementById('tokenInput');
+            const resultDiv = document.getElementById('result');
+
+            const url = tokenInput.value.trim();
+            if (!url) {
+                resultDiv.innerHTML = '<p class="error">Пожалуйста, введите токен!</p>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<p class="success">Загрузка данных...</p>';
+
+            try {
+                const response = await fetch('/get-users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Отображаем данные в таблице
+                    const tableBody = document.getElementById('userDataTableBody');
+                    tableBody.innerHTML = ''; // Очищаем таблицу
+
+                    const doggies = data.doggies || [];
+                    const banned = data.banned || [];
+
+                    // Находим максимальную длину для выравнивания строк
+                    const maxLength = Math.max(doggies.length, banned.length);
+
+                    for (let i = 0; i < maxLength; i++) {
+                        const doggie = doggies[i] || { id: '', link: '' };
+                        const ban = banned[i] || { id: '', link: '' };
+
+                        const row = `
+                            <tr>
+    <td>${doggie.link ? `<a href="${doggie.link}" target="_blank">${doggie.link}</a>` : ''}</td>
+    <td>${ban.link ? `<a href="${ban.link}" target="_blank">${ban.id}</a>` : ''}</td>
+</tr>
+                        `;
+                        tableBody.insertAdjacentHTML('beforeend', row);
+                    }
+
+                    // Показываем таблицу и кнопку удаления
+                    document.getElementById('userDataTable').style.display = 'table';
+                    document.getElementById('deleteButton').style.display = 'block';
+
+                    resultDiv.innerHTML = '<p class="success">Данные загружены успешно.</p>';
+                } else {
+                    resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Произошла ошибка: ${error.message}</p>`;
+            }
+        });
+
+        // Функция для удаления пользователей
+        async function deleteUsers() {
+            const tokenInput = document.getElementById('tokenInput');
+            const resultDiv = document.getElementById('result');
+
+            const url = tokenInput.value.trim();
+            if (!url) {
+                resultDiv.innerHTML = '<p class="error">Пожалуйста, введите токен!</p>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<p class="success">Удаление пользователей...</p>';
+
+            try {
+                const response = await fetch('/clear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    resultDiv.innerHTML = `<p class="success">${data.message}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Произошла ошибка: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

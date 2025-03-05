@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Send VK Posts</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Отправка постов ВКонтакте</h1>
+        <p class="low-text">Выберите с каких страниц будем отправлять:</p>
+      <!-- Лоадер -->
+      <div id="loader" class="loader-container">
+        <div class="loader"></div>
+        <p>Загрузка...</p>
+      </div>
+
+      <!-- Форма для отправки постов -->
+      <form id="postForm" enctype="multipart/form-data">
+        <div id="tokensContainer"></div>
+        <!-- Контейнер для чекбоксов -->
+        <div class="form-group">
+          <label for="posts">Укажите текста для постов в формате:</label><br />
+          <textarea
+            id="posts"
+            name="posts"
+            rows="4"
+            placeholder='["Пост1","Пост2"]'
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="files">Выберите файлы для прикрепления:</label><br />
+          <input
+            type="file"
+            id="files"
+            name="files"
+            multiple
+            accept=".jpg,.jpeg,.png,.mp4,.avi,.mov"
+          />
+        </div>
+        <button id="submitButton" type="submit">Отправить посты</button>
+      </form>
+
+      <!-- Статус загрузки -->
+      <div id="status"></div>
+
+      <!-- Прогресс-бар -->
+      <div id="progress" class="progress-container">
+        <progress id="progressBar" value="0" max="100"></progress>
+        <span id="progressText">0%</span>
+      </div>
+
+      <!-- Результат отправки -->
+      <div id="result"></div>
+
+      <!-- Ссылки на опубликованные посты -->
+      <div id="postLinks">
+        <h2>Ссылки на посты:</h2>
+        <ul id="linksList"></ul>
+      </div>
+    </div>
+    <div class="container">
+        <h1>Репосты ВКонтакте</h1>
+        <p class="low-text">Выберите аккаунты для репостов:</p>
+        <!-- Лоадер -->
+        <div id="loader-reposts" class="loader-container">
+          <div class="loader"></div>
+          <p>Загрузка...</p>
+        </div>
+        <!-- Форма для репостов -->
+        <form id="repostForm">
+          <div id="tokensContainerReposts"></div>
+          <!-- Контейнер для чекбоксов -->
+          <div class="form-group">
+            <label for="repostLinks">Укажите ссылки для репостов в формате:</label><br />
+            <textarea
+              id="repostLinks"
+              name="repostLinks"
+              rows="4"
+              placeholder='[
+              { "comment": "Это мой комментарий", "link": "https://vk.com/wall-227983663_244" },
+              { "comment": "Еще один комментарий", "link": "https://vk.com/wall1024636450_78" }
+            ]'
+            ></textarea>
+
+          
+            
+          </div>
+          <button id="submitRepostButton" type="submit">Создать репосты</button>
+        </form>
+        <!-- Статус загрузки -->
+        <div id="status-reposts"></div>
+        <!-- Прогресс-бар -->
+        <div id="progress-reposts" class="progress-container">
+          <progress id="progressBarReposts" value="0" max="100"></progress>
+          <span id="progressTextReposts">0%</span>
+        </div>
+        <!-- Результат отправки -->
+        <div id="result-reposts"></div>
+        <!-- Ссылки на опубликованные репосты -->
+        <div id="postLinksReposts">
+          <h2>Ссылки на репосты:</h2>
+          <ul id="linksListReposts"></ul>
+        </div>
+      </div>
+
+ 
+<script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+    
+    
+    const tokensInput = document.getElementById("tokensContainer");
+    const postsInput = document.getElementById("posts");
+    const filesInput = document.getElementById("files");
+    const submitButton = document.getElementById("submitButton");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const progressDiv = document.getElementById("progress");
+    const resultDiv = document.getElementById("result");
+    const linksList = document.getElementById("linksList");
+    const loader = document.getElementById("loader"); // Лоадер
+    
+    let tokensData = [];
+    
+    // Функция для отображения лоадера
+    function showLoader() {
+      loader.style.display = "flex";
+    }
+    
+    // Функция для скрытия лоадера
+    function hideLoader() {
+      loader.style.display = "none";
+    }
+    
+    // Функция для получения списка пользователей
+    async function fetchUsers() {
+    showLoader(); // Показываем лоадер
+    try {
+      const response = await fetch('/fetch-users', {
+          method: 'GET'
+      });
+    
+      if (response.ok) {
+          const users = await response.json();
+          tokensInput.innerHTML = ''; // Очищаем контейнер
+    
+          // Размер группы (количество пользователей в одной группе)
+          const groupSize = 10;
+    
+          // Разделяем массив пользователей на группы по 10 элементов
+          for (let i = 0; i < users.length; i += groupSize) {
+              const group = users.slice(i, i + groupSize);
+    
+              // Создаем заголовок группы
+              const titleGroup = document.createElement('p');
+              let groupname = `${Math.floor(i / groupSize) + 1}`;
+              if (groupname === "2") {
+                  groupname = "Курлов Урод";
+              }
+              titleGroup.textContent = groupname;
+              tokensInput.appendChild(titleGroup); // Добавляем заголовок в основной контейнер
+    
+              // Создаем контейнер для группы
+              const groupDiv = document.createElement('div');
+              groupDiv.classList.add('group');
+    
+              // Добавляем каждого пользователя в группу
+              group.forEach(user => {
+                  const checkbox = document.createElement('input');
+                  checkbox.type = 'checkbox';
+                  checkbox.value = user.token;
+                  checkbox.id = `user-${user.id}`;
+                  checkbox.checked = false; // По умолчанию все не выбраны
+    
+                  const label = document.createElement('label');
+                  label.htmlFor = `user-${user.id}`;
+                  label.textContent = `${user.firstName} ${user.lastName} (${user.id})`;
+    
+                  const div = document.createElement('div');
+                  div.appendChild(checkbox);
+                  div.appendChild(label);
+    
+                  groupDiv.appendChild(div);
+              });
+    
+              // Добавляем группу в основной контейнер
+              tokensInput.appendChild(groupDiv);
+          }
+      } else {
+          console.error('Ошибка при получении пользователей:', await response.text());
+      }
+    } catch (error) {
+      console.error('Ошибка сети:', error.message || error);
+    } finally {
+      hideLoader(); // Скрываем лоадер
+    }
+    }
+    
+    
+    
+    
+    
+    // Загружаем пользователей при загрузке страницы
+    window.addEventListener("load", fetchUsers);
+    
+    // Отправка формы с отслеживанием прогресса
+    document
+      .getElementById("postForm")
+      .addEventListener("submit", async (event) => {
+        event.preventDefault();
+    
+        const selectedTokens = [];
+        const checkboxes = tokensInput.querySelectorAll(
+          'input[type="checkbox"]:checked'
+        );
+        checkboxes.forEach((checkbox) => {
+          selectedTokens.push(checkbox.value);
+        });
+    
+        if (selectedTokens.length === 0) {
+          alert("Пожалуйста, выберите хотя бы один аккаунт.");
+          return;
+        }
+    
+        const postsJson = postsInput.value.trim();
+        const files = filesInput.files;
+    
+        if (!postsJson) {
+          alert("Введите тексты постов.");
+          return;
+        }
+    
+        try {
+          const postsData = JSON.parse(postsJson);
+    
+          const formData = new FormData();
+          formData.append("tokens", JSON.stringify(selectedTokens));
+          formData.append("posts", postsJson);
+    
+          for (const file of files) {
+            formData.append("files", file);
+          }
+    
+          // Блокируем кнопку
+          submitButton.disabled = true;
+          submitButton.innerText = "Отправка...";
+    
+          // Показываем прогресс-бар и лоадер
+          progressDiv.style.display = "flex";
+          showLoader();
+    
+          // Создаем XMLHttpRequest для отправки данных
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "/send-posts", true);
+    
+          // Отслеживание прогресса загрузки
+          xhr.upload.addEventListener("progress", (event) => {
+            if (event.lengthComputable) {
+              const percentComplete = (event.loaded / event.total) * 100;
+              progressBar.value = percentComplete;
+              progressText.innerText = `${Math.round(percentComplete)}%`;
+            }
+          });
+    
+          // Обработка ответа сервера
+          xhr.onload = () => {
+            if (xhr.status === 200) {
+              const data = JSON.parse(xhr.responseText);
+              linksList.innerHTML = ""; // Очищаем список ссылок
+    
+              if (data.every((item) => item.success)) {
+                resultDiv.innerText = "Посты успешно опубликованы!";
+                data.forEach((post) => {
+                  const li = document.createElement("li");
+                  const link = document.createElement("a");
+                  link.href = post.postUrl;
+                  link.target = "_blank";
+                  link.innerText = post.postUrl;
+                  li.appendChild(link);
+                  linksList.appendChild(li);
+                });
+              } else {
+                resultDiv.innerText = "Ошибка при публикации постов.";
+              }
+            } else {
+              resultDiv.innerText = "Ошибка при отправке данных.";
+            }
+    
+            // Разблокируем кнопку
+            submitButton.disabled = false;
+            submitButton.innerText = "Отправить посты";
+    
+            // Скрываем прогресс-бар и лоадер
+            progressDiv.style.display = "none";
+            hideLoader();
+          };
+    
+          // Обработка ошибок
+          xhr.onerror = () => {
+            resultDiv.innerText = "Ошибка сети.";
+            submitButton.disabled = false;
+            submitButton.innerText = "Отправить посты";
+            progressDiv.style.display = "none";
+            hideLoader();
+          };
+    
+          // Отправляем данные
+          xhr.send(formData);
+        } catch (error) {
+          alert('Некорректный формат JSON в поле "Посты".');
+          hideLoader(); // Скрываем лоадер в случае ошибки
+        }
+      });
+    })
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+  // Элементы второй части приложения
+  const tokensInputReposts = document.getElementById("tokensContainerReposts");
+  const repostLinksInput = document.getElementById("repostLinks");
+  const submitRepostButton = document.getElementById("submitRepostButton");
+  const progressBarReposts = document.getElementById("progressBarReposts");
+  const progressTextReposts = document.getElementById("progressTextReposts");
+  const progressDivReposts = document.getElementById("progress-reposts");
+  const resultDivReposts = document.getElementById("result-reposts");
+  const linksListReposts = document.getElementById("linksListReposts");
+  const loaderReposts = document.getElementById("loader-reposts");
+
+  // Функции для работы с лоадером
+  function showLoaderReposts() {
+    loaderReposts.style.display = "flex";
+  }
+
+  function hideLoaderReposts() {
+    loaderReposts.style.display = "none";
+  }
+
+  // Загрузка пользователей для репостов
+  async function fetchUsersForReposts() {
+    showLoaderReposts(); // Показываем лоадер
+    try {
+      const response = await fetch('/fetch-users', { method: 'GET' });
+      if (!response.ok) {
+        throw new Error(`Ошибка при получении пользователей: ${response.status} ${response.statusText}`);
+      }
+
+      const users = await response.json();
+      console.log('Полученные пользователи:', users); // Логируем данные
+
+      if (!Array.isArray(users)) {
+        throw new Error('Полученные данные не являются массивом пользователей.');
+      }
+
+      // Очищаем контейнер
+      tokensInputReposts.innerHTML = '';
+
+      // Разделяем пользователей на группы по 10 человек
+      const groupSize = 10;
+      for (let i = 0; i < users.length; i += groupSize) {
+        const group = users.slice(i, i + groupSize);
+
+        // Создаем заголовок группы
+        const titleGroup = document.createElement('p');
+        let groupname = `${Math.floor(i / groupSize) + 1}`;
+        if (groupname === "2") {
+          groupname = "Курлов Урод";
+        }
+        titleGroup.textContent = groupname;
+        tokensInputReposts.appendChild(titleGroup);
+
+        // Создаем группу чекбоксов
+        const groupDiv = document.createElement('div');
+        groupDiv.classList.add('group');
+        group.forEach(user => {
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.value = user.token;
+          checkbox.id = `user-repost-${user.id}`;
+          checkbox.checked = false;
+
+          const label = document.createElement('label');
+          label.htmlFor = `user-repost-${user.id}`;
+          label.textContent = `${user.firstName} ${user.lastName} (${user.id})`;
+
+          const div = document.createElement('div');
+          div.appendChild(checkbox);
+          div.appendChild(label);
+          groupDiv.appendChild(div);
+        });
+
+        tokensInputReposts.appendChild(groupDiv);
+      }
+    } catch (error) {
+      console.error('Ошибка при загрузке пользователей:', error.message || error);
+      alert(`Ошибка при загрузке пользователей: ${error.message || error}`);
+    } finally {
+      hideLoaderReposts(); // Скрываем лоадер
+    }
+  }
+
+  // Обработка формы репостов
+  document.getElementById("repostForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    // Получаем выбранные аккаунты
+    const selectedTokens = [];
+    const checkboxes = tokensInputReposts.querySelectorAll('input[type="checkbox"]:checked');
+    checkboxes.forEach((checkbox) => {
+      selectedTokens.push(checkbox.value);
+    });
+
+    if (selectedTokens.length === 0) {
+      alert("Пожалуйста, выберите хотя бы один аккаунт.");
+      return;
+    }
+
+    // Получаем JSON с описаниями
+    const repostLinksJson = repostLinksInput.value.trim();
+    if (!repostLinksJson) {
+      alert("Введите данные для репостов.");
+      return;
+    }
+
+    try {
+      const repostLinksData = JSON.parse(repostLinksJson);
+
+      // Проверяем, что данные являются массивом объектов
+      if (
+        !Array.isArray(repostLinksData) ||
+        !repostLinksData.every(link =>
+          typeof link.comment === 'string' &&
+          typeof link.link === 'string'
+        )
+      ) {
+        throw new Error('Некорректный формат данных. Ожидался массив объектов с полями "comment" и "link".');
+      }
+
+      console.log('Разобранные данные для репостов:', repostLinksData); // Логируем данные
+
+      // Блокируем кнопку и показываем прогресс-бар
+      submitRepostButton.disabled = true;
+      submitRepostButton.innerText = "Создание репостов...";
+      progressDivReposts.style.display = "flex";
+      showLoaderReposts();
+
+      // Распределяем ссылки между токенами
+      const results = [];
+      for (let i = 0; i < repostLinksData.length; i++) {
+        const token = selectedTokens[i % selectedTokens.length]; // Циклическое распределение токенов
+        const { comment, link } = repostLinksData[i];
+
+        try {
+          console.log(`Отправка запроса для ссылки: ${link}, комментарий: ${comment}`); // Логируем отправку
+
+          const response = await fetch('/send-repost', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              token,
+              comment,
+              link,
+            }),
+          });
+
+          const data = await response.json();
+          console.log('Ответ от сервера:', data); // Логируем ответ
+
+          if (data.success) {
+            results.push({ success: true, postUrl: data.postUrl });
+          } else {
+            results.push({ success: false, error: data.error });
+          }
+        } catch (error) {
+          console.error(`Ошибка при обработке ссылки ${link}:`, error.message || error); // Логируем ошибку
+          results.push({ success: false, error: error.message || "Ошибка сети" });
+        }
+
+        // Обновляем прогресс-бар
+        const progress = ((i + 1) / repostLinksData.length) * 100;
+        progressBarReposts.value = progress;
+        progressTextReposts.innerText = `${Math.round(progress)}%`;
+      }
+
+      // Отображаем результаты
+      linksListReposts.innerHTML = "";
+results.forEach(async (result) => {
+  const li = document.createElement("li");
+
+  if (result.success) {
+    try {
+      // Получаем токен пользователя, который сделал репост
+      const token = selectedTokens[results.indexOf(result) % selectedTokens.length];
+
+      // Выполняем запрос к wall.get для получения последней записи
+      const response = await fetch('/get-last-post', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await response.json();
+      console.log('Последняя запись:', data);
+
+      if (data.success) {
+        const lastPostUrl = data.postUrl; // Ссылка на последнюю запись
+        const link = document.createElement("a");
+        link.href = lastPostUrl;
+        link.target = "_blank";
+        link.innerText = lastPostUrl;
+        li.appendChild(link);
+      } else {
+        li.innerText = `Ошибка при получении последней записи: ${data.error}`;
+      }
+    } catch (error) {
+      console.error(`Ошибка при обработке последней записи:`, error.message || error);
+      li.innerText = `Ошибка при получении последней записи: ${error.message || "Ошибка сети"}`;
+    }
+  } else {
+    li.innerText = `Ошибка: ${result.error}`;
+  }
+
+  linksListReposts.appendChild(li);
+});
+
+      resultDivReposts.innerText = "Репосты завершены.";
+
+      // Очищаем форму после отправки
+      repostLinksInput.value = "";
+    } catch (error) {
+      console.error('Глобальная ошибка:', error.message || error); // Логируем глобальную ошибку
+      alert(`Ошибка: ${error.message}`);
+    } finally {
+      // Разблокируем кнопку и скрываем прогресс-бар
+      submitRepostButton.disabled = false;
+      submitRepostButton.innerText = "Создать репосты";
+      progressDivReposts.style.display = "none";
+      hideLoaderReposts();
+    }
+  });
+
+  // Инициализация
+  window.addEventListener("load", () => {
+    fetchUsersForReposts();
+  });
+});
+</script>
+  </body>
+</html>
+
+
+

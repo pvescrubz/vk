@@ -1,0 +1,16 @@
+{
+  "name": "vk-like-bot",
+  "version": "1.0.0",
+  "main": "vk_like_bot.js",
+  "scripts": {
+    "start": "node vk_like_bot.js"
+  },
+  "dependencies": {
+    "axios": "^1.8.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "form-data": "^4.0.2",
+    "multer": "^1.4.5-lts.1",
+    "puppeteer": "^24.3.0"
+  }
+}
