@@ -1,0 +1,8 @@
+# Игнорировать node_modules
+node_modules/
+
+# Игнорировать папку uploads
+uploads/
+
+# Игнорировать Chrome_profiles
+Chrome_profiles/
