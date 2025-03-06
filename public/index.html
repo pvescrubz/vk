@@ -317,235 +317,168 @@
     </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-  // Элементы второй части приложения
-  const tokensInputReposts = document.getElementById("tokensContainerReposts");
-  const repostLinksInput = document.getElementById("repostLinks");
-  const submitRepostButton = document.getElementById("submitRepostButton");
-  const progressBarReposts = document.getElementById("progressBarReposts");
-  const progressTextReposts = document.getElementById("progressTextReposts");
-  const progressDivReposts = document.getElementById("progress-reposts");
-  const resultDivReposts = document.getElementById("result-reposts");
-  const linksListReposts = document.getElementById("linksListReposts");
-  const loaderReposts = document.getElementById("loader-reposts");
+  document.addEventListener('DOMContentLoaded', function () {
+      const tokensInputReposts = document.getElementById("tokensContainerReposts");
+      const repostLinksInput = document.getElementById("repostLinks");
+      const submitRepostButton = document.getElementById("submitRepostButton");
+      const progressBarReposts = document.getElementById("progressBarReposts");
+      const progressTextReposts = document.getElementById("progressTextReposts");
+      const progressDivReposts = document.getElementById("progress-reposts");
+      const resultDivReposts = document.getElementById("result-reposts");
+      const linksListReposts = document.getElementById("linksListReposts");
+      const loaderReposts = document.getElementById("loader-reposts");
 
-  // Функции для работы с лоадером
-  function showLoaderReposts() {
-    loaderReposts.style.display = "flex";
-  }
-
-  function hideLoaderReposts() {
-    loaderReposts.style.display = "none";
-  }
-
-  // Загрузка пользователей для репостов
-  async function fetchUsersForReposts() {
-    showLoaderReposts(); // Показываем лоадер
-    try {
-      const response = await fetch('/fetch-users', { method: 'GET' });
-      if (!response.ok) {
-        throw new Error(`Ошибка при получении пользователей: ${response.status} ${response.statusText}`);
+      function showLoaderReposts() {
+          loaderReposts.style.display = "flex";
       }
 
-      const users = await response.json();
-      console.log('Полученные пользователи:', users); // Логируем данные
-
-      if (!Array.isArray(users)) {
-        throw new Error('Полученные данные не являются массивом пользователей.');
+      function hideLoaderReposts() {
+          loaderReposts.style.display = "none";
       }
 
-      // Очищаем контейнер
-      tokensInputReposts.innerHTML = '';
+      async function fetchUsersForReposts() {
+          showLoaderReposts();
+          try {
+              const response = await fetch('/fetch-users', { method: 'GET' });
+              const users = await response.json();
 
-      // Разделяем пользователей на группы по 10 человек
-      const groupSize = 10;
-      for (let i = 0; i < users.length; i += groupSize) {
-        const group = users.slice(i, i + groupSize);
+              tokensInputReposts.innerHTML = '';
+              const groupSize = 10;
 
-        // Создаем заголовок группы
-        const titleGroup = document.createElement('p');
-        let groupname = `${Math.floor(i / groupSize) + 1}`;
-        if (groupname === "2") {
-          groupname = "Курлов Урод";
-        }
-        titleGroup.textContent = groupname;
-        tokensInputReposts.appendChild(titleGroup);
+              for (let i = 0; i < users.length; i += groupSize) {
+                  const group = users.slice(i, i + groupSize);
+                  const titleGroup = document.createElement('p');
+                  titleGroup.textContent = `Группа ${Math.floor(i / groupSize) + 1}`;
+                  tokensInputReposts.appendChild(titleGroup);
 
-        // Создаем группу чекбоксов
-        const groupDiv = document.createElement('div');
-        groupDiv.classList.add('group');
-        group.forEach(user => {
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.value = user.token;
-          checkbox.id = `user-repost-${user.id}`;
-          checkbox.checked = false;
+                  const groupDiv = document.createElement('div');
+                  groupDiv.classList.add('group');
+                  group.forEach(user => {
+                      const checkbox = document.createElement('input');
+                      checkbox.type = 'checkbox';
+                      checkbox.value = user.token;
+                      checkbox.id = `user-repost-${user.id}`;
 
-          const label = document.createElement('label');
-          label.htmlFor = `user-repost-${user.id}`;
-          label.textContent = `${user.firstName} ${user.lastName} (${user.id})`;
+                      const label = document.createElement('label');
+                      label.htmlFor = `user-repost-${user.id}`;
+                      label.textContent = `${user.firstName} ${user.lastName} (${user.id})`;
 
-          const div = document.createElement('div');
-          div.appendChild(checkbox);
-          div.appendChild(label);
-          groupDiv.appendChild(div);
-        });
-
-        tokensInputReposts.appendChild(groupDiv);
-      }
-    } catch (error) {
-      console.error('Ошибка при загрузке пользователей:', error.message || error);
-      alert(`Ошибка при загрузке пользователей: ${error.message || error}`);
-    } finally {
-      hideLoaderReposts(); // Скрываем лоадер
-    }
-  }
-
-  // Обработка формы репостов
-  document.getElementById("repostForm").addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    // Получаем выбранные аккаунты
-    const selectedTokens = [];
-    const checkboxes = tokensInputReposts.querySelectorAll('input[type="checkbox"]:checked');
-    checkboxes.forEach((checkbox) => {
-      selectedTokens.push(checkbox.value);
-    });
-
-    if (selectedTokens.length === 0) {
-      alert("Пожалуйста, выберите хотя бы один аккаунт.");
-      return;
-    }
-
-    // Получаем JSON с описаниями
-    const repostLinksJson = repostLinksInput.value.trim();
-    if (!repostLinksJson) {
-      alert("Введите данные для репостов.");
-      return;
-    }
-
-    try {
-      const repostLinksData = JSON.parse(repostLinksJson);
-
-      // Проверяем, что данные являются массивом объектов
-      if (
-        !Array.isArray(repostLinksData) ||
-        !repostLinksData.every(link =>
-          typeof link.comment === 'string' &&
-          typeof link.link === 'string'
-        )
-      ) {
-        throw new Error('Некорректный формат данных. Ожидался массив объектов с полями "comment" и "link".');
-      }
-
-      console.log('Разобранные данные для репостов:', repostLinksData); // Логируем данные
-
-      // Блокируем кнопку и показываем прогресс-бар
-      submitRepostButton.disabled = true;
-      submitRepostButton.innerText = "Создание репостов...";
-      progressDivReposts.style.display = "flex";
-      showLoaderReposts();
-
-      // Распределяем ссылки между токенами
-      const results = [];
-      for (let i = 0; i < repostLinksData.length; i++) {
-        const token = selectedTokens[i % selectedTokens.length]; // Циклическое распределение токенов
-        const { comment, link } = repostLinksData[i];
-
-        try {
-          console.log(`Отправка запроса для ссылки: ${link}, комментарий: ${comment}`); // Логируем отправку
-
-          const response = await fetch('/send-repost', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              token,
-              comment,
-              link,
-            }),
-          });
-
-          const data = await response.json();
-          console.log('Ответ от сервера:', data); // Логируем ответ
-
-          if (data.success) {
-            results.push({ success: true, postUrl: data.postUrl });
-          } else {
-            results.push({ success: false, error: data.error });
+                      const div = document.createElement('div');
+                      div.appendChild(checkbox);
+                      div.appendChild(label);
+                      groupDiv.appendChild(div);
+                  });
+                  tokensInputReposts.appendChild(groupDiv);
+              }
+          } catch (error) {
+              alert(`Ошибка загрузки пользователей: ${error.message}`);
+          } finally {
+              hideLoaderReposts();
           }
-        } catch (error) {
-          console.error(`Ошибка при обработке ссылки ${link}:`, error.message || error); // Логируем ошибку
-          results.push({ success: false, error: error.message || "Ошибка сети" });
-        }
-
-        // Обновляем прогресс-бар
-        const progress = ((i + 1) / repostLinksData.length) * 100;
-        progressBarReposts.value = progress;
-        progressTextReposts.innerText = `${Math.round(progress)}%`;
       }
 
-      // Отображаем результаты
-      linksListReposts.innerHTML = "";
-results.forEach(async (result) => {
-  const li = document.createElement("li");
+      document.getElementById("repostForm").addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-  if (result.success) {
-    try {
-      // Получаем токен пользователя, который сделал репост
-      const token = selectedTokens[results.indexOf(result) % selectedTokens.length];
+          const selectedTokens = [];
+          const checkboxes = tokensInputReposts.querySelectorAll('input[type="checkbox"]:checked');
+          checkboxes.forEach(checkbox => selectedTokens.push(checkbox.value));
 
-      // Выполняем запрос к wall.get для получения последней записи
-      const response = await fetch('/get-last-post', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token }),
+          if (selectedTokens.length === 0) {
+              alert("Выберите аккаунты");
+              return;
+          }
+
+          const repostLinksJson = repostLinksInput.value.trim();
+          if (!repostLinksJson) {
+              alert("Введите данные для репостов");
+              return;
+          }
+
+          try {
+              const repostLinksData = JSON.parse(repostLinksJson);
+              if (!Array.isArray(repostLinksData) || 
+                  !repostLinksData.every(item => item.comment && item.link)) {
+                  throw new Error('Неверный формат данных');
+              }
+
+              submitRepostButton.disabled = true;
+              submitRepostButton.innerText = "Создание репостов...";
+              progressDivReposts.style.display = "flex";
+              showLoaderReposts();
+
+              const results = [];
+              for (let i = 0; i < repostLinksData.length; i++) {
+                  const token = selectedTokens[i % selectedTokens.length];
+                  const { comment, link } = repostLinksData[i];
+
+                  try {
+                      const response = await fetch('/send-repost', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ token, comment, link }),
+                      });
+
+                      const data = await response.json();
+                      results.push(data);
+                  } catch (error) {
+                      results.push({ success: false, error: error.message });
+                  }
+
+                  const progress = ((i + 1) / repostLinksData.length) * 100;
+                  progressBarReposts.value = progress;
+                  progressTextReposts.innerText = `${Math.round(progress)}%`;
+              }
+
+              linksListReposts.innerHTML = "";
+              for (const result of results) {
+                  const li = document.createElement("li");
+                  if (result.success) {
+                      try {
+                          const postResponse = await fetch('/get-last-post', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ 
+                                  token: selectedTokens[results.indexOf(result) % selectedTokens.length],
+                                  owner_id: result.ownerId
+                              }),
+                          });
+                          const postData = await postResponse.json();
+                          
+                          if (postData.success) {
+                              const link = document.createElement("a");
+                              link.href = postData.postUrl;
+                              link.target = "_blank";
+                              link.innerText = postData.postUrl;
+                              li.appendChild(link);
+                          } else {
+                              li.innerText = `Ошибка: ${postData.error}`;
+                          }
+                      } catch (error) {
+                          li.innerText = `Ошибка: ${error.message}`;
+                      }
+                  } else {
+                      li.innerText = `Ошибка: ${result.error}`;
+                  }
+                  linksListReposts.appendChild(li);
+              }
+
+              resultDivReposts.innerText = "Репосты завершены";
+              repostLinksInput.value = "";
+          } catch (error) {
+              alert(`Ошибка: ${error.message}`);
+          } finally {
+              submitRepostButton.disabled = false;
+              submitRepostButton.innerText = "Создать репосты";
+              progressDivReposts.style.display = "none";
+              hideLoaderReposts();
+          }
       });
 
-      const data = await response.json();
-      console.log('Последняя запись:', data);
-
-      if (data.success) {
-        const lastPostUrl = data.postUrl; // Ссылка на последнюю запись
-        const link = document.createElement("a");
-        link.href = lastPostUrl;
-        link.target = "_blank";
-        link.innerText = lastPostUrl;
-        li.appendChild(link);
-      } else {
-        li.innerText = `Ошибка при получении последней записи: ${data.error}`;
-      }
-    } catch (error) {
-      console.error(`Ошибка при обработке последней записи:`, error.message || error);
-      li.innerText = `Ошибка при получении последней записи: ${error.message || "Ошибка сети"}`;
-    }
-  } else {
-    li.innerText = `Ошибка: ${result.error}`;
-  }
-
-  linksListReposts.appendChild(li);
-});
-
-      resultDivReposts.innerText = "Репосты завершены.";
-
-      // Очищаем форму после отправки
-      repostLinksInput.value = "";
-    } catch (error) {
-      console.error('Глобальная ошибка:', error.message || error); // Логируем глобальную ошибку
-      alert(`Ошибка: ${error.message}`);
-    } finally {
-      // Разблокируем кнопку и скрываем прогресс-бар
-      submitRepostButton.disabled = false;
-      submitRepostButton.innerText = "Создать репосты";
-      progressDivReposts.style.display = "none";
-      hideLoaderReposts();
-    }
+      window.addEventListener("load", () => {
+          fetchUsersForReposts();
+      });
   });
-
-  // Инициализация
-  window.addEventListener("load", () => {
-    fetchUsersForReposts();
-  });
-});
 </script>
   </body>
 </html>

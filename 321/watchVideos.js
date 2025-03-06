@@ -88,7 +88,7 @@ async function watchVideo(page, videoUrl, videoDuration) {
         console.log(`[${formatTimestamp(new Date())}] Переходим к видео: ${videoUrl}`);
         await page.goto(videoUrl, { waitUntil: 'load', timeout: 60000 });
 
-        // Имитируем просмотр видео в течение его длительности
+        // Имитируем просмотр видео в течение его длительностиno
         const watchTime = videoDuration * 1000; // Переводим длительность в миллисекунды
         console.log(`[${formatTimestamp(new Date())}] Смотрю видео (${videoUrl}) в течение ${videoDuration} секунд...`);
         await new Promise(resolve => setTimeout(resolve, watchTime)); // Ждем полную длительность видео
@@ -140,7 +140,8 @@ function getRandomDelay(min = 5000, max = 15000) {
 }
 
 // Основная функция
-(async () => {
+async function WatchVideos()
+     {
     const ownerId = '-229000453'; // ID паблика (замените на нужный)
 
     // Находим все профили в папке Chrome_Profiles
@@ -227,4 +228,12 @@ function getRandomDelay(min = 5000, max = 15000) {
     }
 
     console.log('[+] Все профили завершили работу.');
-})();
+    console.log('перезапускаю');
+    startAgain();
+}
+
+
+function startAgain () {
+    WatchVideos();
+}
+

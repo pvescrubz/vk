@@ -1,2 +1,3 @@
-2025/03/05-16:01:52.428 8403 Creating DB /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile10/Default/shared_proto_db/metadata since it was missing.
-2025/03/05-16:01:52.442 8403 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile10/Default/shared_proto_db/metadata/MANIFEST-000001
+2025/03/06-14:29:59.272 8307 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile10/Default/shared_proto_db/metadata/MANIFEST-000001
+2025/03/06-14:29:59.272 8307 Recovering log #3
+2025/03/06-14:29:59.273 8307 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile10/Default/shared_proto_db/metadata/000003.log 

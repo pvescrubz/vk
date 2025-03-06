@@ -1,2 +1,3 @@
-2025/03/05-15:59:51.075 a503 Creating DB /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile8/Default/Sync Data/LevelDB since it was missing.
-2025/03/05-15:59:51.081 a503 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile8/Default/Sync Data/LevelDB/MANIFEST-000001
+2025/03/06-16:08:01.768 f503 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile8/Default/Sync Data/LevelDB/MANIFEST-000001
+2025/03/06-16:08:01.771 f503 Recovering log #3
+2025/03/06-16:08:01.771 f503 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile8/Default/Sync Data/LevelDB/000003.log 

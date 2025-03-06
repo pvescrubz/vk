@@ -1,2 +1,3 @@
-2025/03/05-15:59:19.725 f403 Creating DB /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile7/Default/Site Characteristics Database since it was missing.
-2025/03/05-15:59:19.734 f403 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile7/Default/Site Characteristics Database/MANIFEST-000001
+2025/03/06-16:01:48.098 15103 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile7/Default/Site Characteristics Database/MANIFEST-000001
+2025/03/06-16:01:48.099 15103 Recovering log #3
+2025/03/06-16:01:48.100 15103 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile7/Default/Site Characteristics Database/000003.log 

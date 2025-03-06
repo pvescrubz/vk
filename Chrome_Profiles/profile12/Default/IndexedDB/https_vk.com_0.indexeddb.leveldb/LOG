@@ -1,2 +1,6 @@
-2025/03/05-16:05:01.810 a303 Creating DB /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile12/Default/IndexedDB/https_vk.com_0.indexeddb.leveldb since it was missing.
-2025/03/05-16:05:01.813 a303 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile12/Default/IndexedDB/https_vk.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/03/06-14:42:07.243 f903 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile12/Default/IndexedDB/https_vk.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/03/06-14:42:07.243 f903 Recovering log #3
+2025/03/06-14:42:07.257 f903 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile12/Default/IndexedDB/https_vk.com_0.indexeddb.leveldb/000003.log 
+2025/03/06-14:42:30.953 8703 Level-0 table #5: started
+2025/03/06-14:42:30.969 8703 Level-0 table #5: 2984073 bytes OK
+2025/03/06-14:42:30.973 8703 Delete type=0 #3

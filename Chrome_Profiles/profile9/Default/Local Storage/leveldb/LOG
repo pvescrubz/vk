@@ -1,2 +1,10 @@
-2025/03/05-16:01:18.731 2b07 Creating DB /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile9/Default/Local Storage/leveldb since it was missing.
-2025/03/05-16:01:18.740 2b07 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile9/Default/Local Storage/leveldb/MANIFEST-000001
+2025/03/06-13:26:34.449 3203 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile9/Default/Local Storage/leveldb/MANIFEST-000001
+2025/03/06-13:26:34.455 3203 Recovering log #4
+2025/03/06-13:26:34.456 3203 Level-0 table #7: started
+2025/03/06-13:26:34.465 3203 Level-0 table #7: 18427 bytes OK
+2025/03/06-13:26:34.465 3203 Recovering log #6
+2025/03/06-13:26:34.466 3203 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile9/Default/Local Storage/leveldb/000006.log 
+2025/03/06-13:26:34.469 3203 Delete type=0 #4
+2025/03/06-13:29:37.192 3b03 Level-0 table #9: started
+2025/03/06-13:29:37.196 3b03 Level-0 table #9: 22496 bytes OK
+2025/03/06-13:29:37.199 3b03 Delete type=0 #6

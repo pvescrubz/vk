@@ -1,3 +1,6 @@
-2025/02/27-17:05:07.316 f803 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile5/Default/IndexedDB/https_vk.com_0.indexeddb.leveldb/MANIFEST-000001
-2025/02/27-17:05:07.316 f803 Recovering log #3
-2025/02/27-17:05:07.317 f803 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile5/Default/IndexedDB/https_vk.com_0.indexeddb.leveldb/000003.log 
+2025/03/06-15:49:49.267 14803 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile5/Default/IndexedDB/https_vk.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/03/06-15:49:49.268 14803 Recovering log #3
+2025/03/06-15:49:49.277 14803 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile5/Default/IndexedDB/https_vk.com_0.indexeddb.leveldb/000003.log 
+2025/03/06-15:52:11.688 a403 Level-0 table #5: started
+2025/03/06-15:52:11.697 a403 Level-0 table #5: 4071995 bytes OK
+2025/03/06-15:52:11.703 a403 Delete type=0 #3

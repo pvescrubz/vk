@@ -1,0 +1,8 @@
+2025/03/06-05:03:13.366 3e03 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile9/Default/Local Storage/leveldb/MANIFEST-000001
+2025/03/06-05:03:13.371 3e03 Recovering log #3
+2025/03/06-05:03:13.372 3e03 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile9/Default/Local Storage/leveldb/000003.log 
+2025/03/06-05:05:16.017 3303 Level-0 table #5: started
+2025/03/06-05:05:16.024 3303 Level-0 table #5: 39640 bytes OK
+2025/03/06-05:05:16.028 3303 Delete type=0 #3
+2025/03/06-05:11:40.219 3303 Level-0 table #7: started
+2025/03/06-05:11:40.261 3303 Level-0 table #7: 18427 bytes OK

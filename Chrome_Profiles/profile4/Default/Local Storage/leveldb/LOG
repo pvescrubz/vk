@@ -1,9 +1,19 @@
-2025/02/27-16:59:21.067 2c03 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile4/Default/Local Storage/leveldb/MANIFEST-000001
-2025/02/27-16:59:21.072 2c03 Recovering log #3
-2025/02/27-16:59:21.073 2c03 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile4/Default/Local Storage/leveldb/000003.log 
-2025/02/27-17:00:24.040 3003 Level-0 table #5: started
-2025/02/27-17:00:24.047 3003 Level-0 table #5: 45756 bytes OK
-2025/02/27-17:00:24.050 3003 Delete type=0 #3
-2025/02/27-17:05:01.550 3003 Level-0 table #7: started
-2025/02/27-17:05:01.553 3003 Level-0 table #7: 19824 bytes OK
-2025/02/27-17:05:01.615 3003 Delete type=0 #4
+2025/03/06-15:43:45.952 3a03 Reusing MANIFEST /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile4/Default/Local Storage/leveldb/MANIFEST-000001
+2025/03/06-15:43:45.958 3a03 Recovering log #14
+2025/03/06-15:43:45.959 3a03 Level-0 table #17: started
+2025/03/06-15:43:45.965 3a03 Level-0 table #17: 17857 bytes OK
+2025/03/06-15:43:45.965 3a03 Recovering log #16
+2025/03/06-15:43:45.966 3a03 Reusing old log /Users/macbook/Downloads/vk.likes/Chrome_Profiles/profile4/Default/Local Storage/leveldb/000016.log 
+2025/03/06-15:43:45.969 3a03 Delete type=0 #14
+2025/03/06-15:43:45.971 3503 Compacting 4@0 + 1@1 files
+2025/03/06-15:43:45.984 3503 Generated table #18@0: 179 keys, 26476 bytes
+2025/03/06-15:43:45.985 3503 Compacted 4@0 + 1@1 files => 26476 bytes
+2025/03/06-15:43:45.986 3503 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/03/06-15:43:45.987 3503 Delete type=2 #15
+2025/03/06-15:43:45.987 3503 Delete type=2 #17
+2025/03/06-15:43:45.987 3503 Delete type=2 #7
+2025/03/06-15:43:45.988 3503 Delete type=2 #12
+2025/03/06-15:43:45.988 3503 Delete type=2 #10
+2025/03/06-15:47:48.505 3503 Level-0 table #20: started
+2025/03/06-15:47:48.510 3503 Level-0 table #20: 24369 bytes OK
+2025/03/06-15:47:48.514 3503 Delete type=0 #16
